@@ -22,6 +22,7 @@ import io.netty.channel.DefaultChannelConfig;
 import io.netty.channel.MessageSizeEstimator;
 import io.netty.channel.RecvByteBufAllocator;
 import io.netty.channel.WriteBufferWaterMark;
+import io.netty.util.internal.ObjectUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -147,11 +148,8 @@ public class EpollChannelConfig extends DefaultChannelConfig {
      * <strong>Be aware this config setting can only be adjusted before the channel was registered.</strong>
      */
     public EpollChannelConfig setEpollMode(EpollMode mode) {
-        if (mode == null) {
-            throw new NullPointerException("mode");
-        }
-        try {
-            switch (mode) {
+        ObjectUtil.checkNotNull(mode, "mode");
+        switch (mode) {
             case EDGE_TRIGGERED:
                 checkChannelNotRegistered();
                 ((AbstractEpollChannel) channel).setFlag(Native.EPOLLET);
@@ -162,9 +160,6 @@ public class EpollChannelConfig extends DefaultChannelConfig {
                 break;
             default:
                 throw new Error();
-            }
-        } catch (IOException e) {
-            throw new ChannelException(e);
         }
         return this;
     }

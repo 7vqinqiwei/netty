@@ -98,6 +98,13 @@ public final class Http2TestUtil {
         return data;
     }
 
+    public static Http2Headers newHttp2HeadersWithRequestPseudoHeaders() {
+        return new DefaultHttp2Headers(true)
+            .method("GET")
+            .path("/")
+            .scheme("https");
+    }
+
     /**
      * Returns an {@link AsciiString} that wraps a randomly-filled byte array.
      */
@@ -119,7 +126,7 @@ public final class Http2TestUtil {
 
     public static HpackEncoder newTestEncoder(boolean ignoreMaxHeaderListSize,
                                               long maxHeaderListSize, long maxHeaderTableSize) throws Http2Exception {
-        HpackEncoder hpackEncoder = new HpackEncoder();
+        HpackEncoder hpackEncoder = new HpackEncoder(false, 16, 0);
         ByteBuf buf = Unpooled.buffer();
         try {
             hpackEncoder.setMaxHeaderTableSize(buf, maxHeaderTableSize);
@@ -139,7 +146,7 @@ public final class Http2TestUtil {
     }
 
     public static HpackDecoder newTestDecoder(long maxHeaderListSize, long maxHeaderTableSize) throws Http2Exception {
-        HpackDecoder hpackDecoder = new HpackDecoder(maxHeaderListSize, 32);
+        HpackDecoder hpackDecoder = new HpackDecoder(maxHeaderListSize);
         hpackDecoder.setMaxHeaderTableSize(maxHeaderTableSize);
         return hpackDecoder;
     }
